@@ -13,6 +13,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import java.lang.Boolean.FALSE
+import java.lang.Boolean.TRUE
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,12 +29,19 @@ class MainActivity : AppCompatActivity() {
             val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS)
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
 
-                    ActivityCompat.requestPermissions(this, Array<String>(1) { Manifest.permission.GET_ACCOUNTS }, 1)
+                    ActivityCompat.requestPermissions(this, Array<String>(1) { Manifest.permission.GET_ACCOUNTS }, RCODE)
 
                 }
 
             }
 
+        val binding : ActivityMainBinding= DataBindingUtil.setContentView(this, R.layout.activity_main)
+        val accounts : Array<Account> =  AccountManager.get(this).getAccounts()
+        if (accounts.isNotEmpty()) {
+            val account : String = accounts[0].name
+            this.gname = account
+        }
+        binding.setGuser(this)
 
 
         }
@@ -41,19 +50,11 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             RCODE -> {
                 if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-
                     Log.i(TAG, "Permission has been denied by user")
+
                 } else {
                     Log.i(TAG, "Permission has been granted by user")
-
-                    val binding : ActivityMainBinding= DataBindingUtil.setContentView(this, R.layout.activity_main)
-                    val accounts : Array<Account> =  AccountManager.get(this).getAccounts()
-                    if (accounts.isNotEmpty()) {
-                        val account : String = accounts[0].name
-                        this.gname = account
-                    }
-                    binding.setGuser(this)
-                }
+                        }
             }
         }
     }
