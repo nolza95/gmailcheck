@@ -14,7 +14,7 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 
-
+// commit test
 class MainActivity : AppCompatActivity() {
 
     val TAG = "PermissionDemo"
