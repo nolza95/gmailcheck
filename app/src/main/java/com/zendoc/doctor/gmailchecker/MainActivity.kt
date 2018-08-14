@@ -8,13 +8,10 @@ import androidx.databinding.DataBindingUtil
 import com.zendoc.doctor.gmailchecker.databinding.ActivityMainBinding
 import androidx.core.content.ContextCompat
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import java.lang.Boolean.FALSE
-import java.lang.Boolean.TRUE
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,29 +19,30 @@ class MainActivity : AppCompatActivity() {
     val RCODE = 101
     var gname: String? = "null"
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS)
-            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-
-                    ActivityCompat.requestPermissions(this, Array<String>(1) { Manifest.permission.GET_ACCOUNTS }, RCODE)
-
-                }
-
-            }
-
-        val binding : ActivityMainBinding= DataBindingUtil.setContentView(this, R.layout.activity_main)
-        val accounts : Array<Account> =  AccountManager.get(this).getAccounts()
-        if (accounts.isNotEmpty()) {
-            val account : String = accounts[0].name
-            this.gname = account
-        }
+        versionSdk()
+        getAccount()
+        val binding : ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.setGuser(this)
 
+        }
+
+
+fun versionSdk() {
+    if (Build.VERSION.SDK_INT >= 23) {
+        val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS)
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, Array<String>(1) { Manifest.permission.GET_ACCOUNTS }, RCODE)
 
         }
+
+    }
+}
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
@@ -54,13 +52,17 @@ class MainActivity : AppCompatActivity() {
 
                 } else {
                     Log.i(TAG, "Permission has been granted by user")
-                        }
+                }
             }
         }
     }
 
- }
+fun getAccount() {
+    val accounts : Array<Account> =  AccountManager.get(this).getAccounts()
+    if (accounts.isNotEmpty()) {
+        val account : String = accounts[0].name
+        this.gname = account
+    }
+}
 
-
-
-
+}
